@@ -1,0 +1,46 @@
+nn学习方法
+完成视频的学习，及Lecture8，Lecture9
+按照ex4.pdf完成算法的实现
+
+
+nn实现基本步骤：
+1.随机初始化参数
+2.前向计算h(theta)
+3.试下cost_fun，计算J(theta)
+4.后向bp算法计算各个参数的梯度
+5.使用数值法检测梯度计算是否正确
+6.使用梯度下降或者advanced optimization method with bp 最小化代价函数
+
+
+实现重要步骤：
+一.最重要的cost_fun实现
+1.前向算法的实现，相对较简单，之前已经实现过，把握清楚a_1,z_2,a_2,z_3,a_3,以及哪些有添加bias项，
+以及Theta1(25,401),Theta2(10,26),依次计算，就不会出错
+2.后向学习算法
+a.首先需要弄清楚推导过程：https://www.cnblogs.com/andywenzhi/p/7295262.html?utm_source=itdadao&utm_medium=referral
+b.其实bp算法目的就是求得各个参数的梯度，只不过nn中参数太多，不可能想LR那样，对每个参数求偏导J(theta)来计算。
+其实核心就是从后向前计算，保留中间结果：即对z求的偏导(实现中表示为delta),然后再求各个参数的梯度
+c.求delta的时候，跟进公式推导，输出层很容易求出，然后隐藏层delta_2是根据推导公式求出的，主要是对z求的偏导，所以并
+没有对bias项进行求偏导，所以delta_3:(5000,10),delta_2(5000,25),其中还需要很好的理解，每一个样本都会有组delta值
+d.最后计算梯度的时候，是对每个参数都计算梯度的，我的理解对bias项也会计算梯度，所以最后结果d_2,d_1分别是10*26和25*401,并且最终梯度值
+是总样本梯度和的平均值(除以m)，还可以加上正则项
+e.cost_fun中的h(theta)就是output层，这里也就是a_3
+
+二.初始化参数的随机化
+1.One effective strategy for random initialization is to randomly select values for Θ(l) uniformly in the range [−ε, ε]. You should use ε = 0.12.
+2.This range of values ensures that the parameters are kept small and makes the learning more efficient.
+3.如果参数初始化为0，在bp计算过程中都一样了，这样将无意义
+
+三.数值方式检测梯度计算是否正确
+1.使用数值方法对梯度进行检测，检测bp算法是否正确，方法就是对每一个参数值进行小的改变，然后计算值，用数学的方法求梯度
+2.每修改一个参数，就需要重新跑前向，后向算法来得到这个参数的梯度，所以效率非常慢，实际跑过程中尽量关闭
+3.If your backpropagation implementation is correct, then the relative difference will be small (less than 1e-9) Relative Difference
+
+
+经验
+在调整正则化参数lamda的时候，发现如果参数设置过大，比如大于2，那么bias就大，终止的loss值。设置为0.3---0.4的时候，loss值最小，在0.234左右，准确率在98.7%，当然收敛得比较慢一点。设置为1的时候，loss值再0.4左右，准去率在96%
+所以lamda值越大，收敛越快的，当然误差也比较大，bias就大(符合之前的结论)，lamba值较小，误差较小，收敛比较慢
+lamda  loss  accuracy  收敛
+1      0.46    96.6%
+0.3    0.234   98.7%   较慢
+3      0.632   96.2%
