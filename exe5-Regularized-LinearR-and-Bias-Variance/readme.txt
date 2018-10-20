@@ -1,3 +1,10 @@
+课程重点：
+1.理解什么是bias，variance，学会通过曲线h(x)和learning curve分析
+2.通过增加feature数，多项式，增加样本量等可以改善bias的情况
+3.通过learning curve分析feature树，多项式p，样本量对training error和cv error的影响
+4.通过观察正则化项lambda对train error，cv error的影响，并选择合适的lambda值
+
+
 训练步骤：
 1.实现正则化的cost function和gradient，梯度公式的推导可以参考exe1
 2.查看数据的大致分布
